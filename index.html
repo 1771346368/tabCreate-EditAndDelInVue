@@ -13,6 +13,9 @@
       margin: 0;
       padding: 0;
     }
+    [v-cloak] {
+      display: none;
+    }
     #app {
       margin-top: 50px;
       width: 100%;
@@ -42,6 +45,7 @@
       border-bottom: 1px solid #999;
       border-right: 1px solid #999;
       padding: 14px;
+      z-index: -1;
     }
     li > span {
       user-select:none;
@@ -77,11 +81,41 @@
     input {
       padding: 5px;
     }
+    #weather-v2-plugin-standard {
+      margin: 0 auto;
+    }
   </style>
 </head>
 <body>
-
-<div id ="app">
+<div id="weather-v2-plugin-simple"></div>
+<script>
+  WIDGET = {
+    CONFIG: {
+      "modules": "01234",
+      "background": 1,
+      "tmpColor": "FFFFFF",
+      "tmpSize": 16,
+      "cityColor": "FFFFFF",
+      "citySize": 16,
+      "aqiSize": 16,
+      "weatherIconSize": 24,
+      "alertIconSize": 18,
+      "padding": "10px 10px 10px 10px",
+      "shadow": "1",
+      "language": "auto",
+      "borderRadius": 5,
+      "fixed": "true",
+      "vertical": "middle",
+      "horizontal": "center",
+      "left": 10,
+      "top": 10,
+      "key": "rHQeaULSMQ"
+    }
+  }
+</script>
+<script src="https://apip.weatherdt.com/simple/static/js/weather-simple-common.js?v=2.0"></script>
+<!-- 天气插件 来源：中国天气 -->
+<div id ="app" v-cloak>
   <h3>添加删除标签页与内容</h3>
   <div class="center">
     <div class="header">
