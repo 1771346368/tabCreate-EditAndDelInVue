@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <!-- 引入样式 -->
+<!--  <link rel="stylesheet" href="index.css">-->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <!-- 引入vue -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    #app {
+      margin-top: 50px;
+      width: 100%;
+    }
+    #app > h3 {
+      text-align: center;
+    }
+    .center {
+      margin: 20px auto;
+      width: 900px;
+      height: 450px;
+      border: 1px solid #999;
+    }
+    .header {
+      display: flex;
+      height: 50px;
+      font-size: 0;
+    }
+    ul, li {
+      list-style: none;
+    }
+    ul > li {
+      position: relative;
+      font-size: 14px;
+      height: 20px;
+      float: left;
+      border-bottom: 1px solid #999;
+      border-right: 1px solid #999;
+      padding: 14px;
+    }
+    li > span {
+      user-select:none;
+    }
+    .right {
+      flex: 1;
+      height: 20px;
+      font-size: 14px;
+      margin: 0 auto;
+      padding: 14px;
+      border-bottom: 1px solid #999;
+    }
+    .right > span {
+      float: right;
+      cursor: pointer;
+    }
+    .delTab {
+      position: absolute;
+      right: 0;
+      top: 0;
+      cursor: pointer;
+    }
+    section {
+      padding: 30px;
+
+    }
+    section > p {
+      user-select:none;
+    }
+    .active {
+      border-bottom: 1px solid #fff!important;
+    }
+    input {
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div id ="app">
+  <h3>添加删除标签页与内容</h3>
+  <div class="center">
+    <div class="header">
+      <div class="left">
+        <ul>
+          <li v-for="(item,index) in list" :class="{active:activeIndex==index}">
+          <!-- li是标题栏项目 -->
+            <span v-show="index != editListIndex" @click="changeActive(index)" @dblclick="getListInput(index)">{{item}}</span>
+            <!-- 该span为文字部分 -->
+            <input type="text" v-model = 'listInput' v-show="index == editListIndex" @blur="changeEditListIndex">
+            <!-- 该input为双击之后显示的input框 -->
+            <span class="delTab" @click="del(index)"><i class="el-icon-circle-close"></i></span>
+            <!--   该span为关闭标签的叉x         -->
+          </li>
+        </ul>
+      </div>
+      <div class="right"><span @click="add"><i style="font-size: 24px" class="el-icon-circle-plus-outline"></i></span></div>
+    </div>
+    <div class="main">
+      <section>
+        <textarea @blur="changeEditTextIndex" v-show ='editTextIndex != -1' v-model="textInput"></textarea>
+        <p @dblclick="getTextInput" v-show="editTextIndex == -1">{{ listText[activeIndex] }}</p>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+  //创建Vue实例,得到 ViewModel
+  const vm = new Vue({
+    el: '#app',
+    data: {
+      list: ['标签1','标签2','标签3'],
+      listText: ['内容1','内容2','内容3'],
+      activeIndex: 0,
+      editListIndex: -1,
+      editTextIndex: -1,
+      listInput: '',
+      textInput: '',
+    },
+    mounted: function() {
+      this.init();
+    },
+    methods: {
+      init: function() {
+        if (localStorage.myListStorage != undefined && localStorage.myListTextStorage != undefined) {
+          this.list = JSON.parse(localStorage.myListStorage);
+          this.listText = JSON.parse(localStorage.myListTextStorage);
+        }
+      },
+      save: function() {
+        localStorage.myListStorage = JSON.stringify(this.list);
+        localStorage.myListTextStorage = JSON.stringify(this.listText);
+      },
+      add: function () {
+        if (this.list.length >= 10) {
+          alert('已达到最大标签数!');
+        } else {
+          this.list.push(`标签${this.list.length+1}`);
+          this.listText.push(`内容${this.list.length}`);
+          this.text = this.listText[this.activeIndex];
+          this.save();
+        }
+      },
+      del: function (index) {
+        this.list.splice(index, 1);
+        this.listText.splice(index, 1);
+        if (index != 0) {
+          this.changeActive(index-1);
+        } else if (index == 0 && this.list.length == 0) {
+          this.text = '';
+        } else if (index == 0 && this.list.length != 0) {
+          this.changeActive(index);
+        }
+        this.save();
+      },
+      changeActive: function (index) {
+        this.activeIndex = index;
+      },
+      getListInput: function (index) {
+        this.editListIndex = index;
+        this.listInput = this.list[index];
+      },
+      getTextInput: function () {
+        this.editTextIndex = this.activeIndex;
+        this.textInput = this.listText[this.activeIndex];
+      },
+      changeEditListIndex: function () {
+        this.list[this.editListIndex] = this.listInput;
+        this.editListIndex = -1;
+        this.save();
+      },
+      changeEditTextIndex: function () {
+        this.listText[this.editTextIndex] = this.textInput;
+        this.editTextIndex = -1;
+        this.save();
+      },
+    }
+  });
+</script>
+</body>
+</html>
