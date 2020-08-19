@@ -45,9 +45,8 @@
       border-bottom: 1px solid #999;
       border-right: 1px solid #999;
       padding: 14px;
-      z-index: -1;
     }
-    li > span {
+    li > span, .right > span {
       user-select:none;
     }
     .right {
@@ -87,6 +86,35 @@
   </style>
 </head>
 <body>
+
+<div id ="app" v-cloak>
+  <h3>添加删除标签页与内容</h3>
+  <div class="center">
+    <div class="header">
+      <div class="left">
+        <ul>
+          <li v-for="(item,index) in list" :class="{active:activeIndex==index}">
+          <!-- li是标题栏项目 -->
+            <span v-show="index != editListIndex" @click="changeActive(index)" @dblclick="getListInput(index)">{{item}}</span>
+            <!-- 该span为文字部分 -->
+            <input type="text" v-model = 'listInput' v-show="index == editListIndex" @blur="changeEditListIndex">
+            <!-- 该input为双击之后显示的input框 -->
+            <span class="delTab" @click="del(index)"><i class="el-icon-circle-close"></i></span>
+            <!--   该span为关闭标签的叉x         -->
+          </li>
+        </ul>
+      </div>
+      <div class="right"><span @click="add"><i style="font-size: 24px" class="el-icon-circle-plus-outline"></i></span></div>
+    </div>
+    <div class="main">
+      <section>
+        <textarea @blur="changeEditTextIndex" v-show ='editTextIndex != -1' v-model="textInput"></textarea>
+        <p @dblclick="getTextInput" v-show="editTextIndex == -1">{{ listText[activeIndex] }}</p>
+      </section>
+    </div>
+  </div>
+</div>
+
 <div id="weather-v2-plugin-simple"></div>
 <script>
   WIDGET = {
@@ -115,33 +143,7 @@
 </script>
 <script src="https://apip.weatherdt.com/simple/static/js/weather-simple-common.js?v=2.0"></script>
 <!-- 天气插件 来源：中国天气 -->
-<div id ="app" v-cloak>
-  <h3>添加删除标签页与内容</h3>
-  <div class="center">
-    <div class="header">
-      <div class="left">
-        <ul>
-          <li v-for="(item,index) in list" :class="{active:activeIndex==index}">
-          <!-- li是标题栏项目 -->
-            <span v-show="index != editListIndex" @click="changeActive(index)" @dblclick="getListInput(index)">{{item}}</span>
-            <!-- 该span为文字部分 -->
-            <input type="text" v-model = 'listInput' v-show="index == editListIndex" @blur="changeEditListIndex">
-            <!-- 该input为双击之后显示的input框 -->
-            <span class="delTab" @click="del(index)"><i class="el-icon-circle-close"></i></span>
-            <!--   该span为关闭标签的叉x         -->
-          </li>
-        </ul>
-      </div>
-      <div class="right"><span @click="add"><i style="font-size: 24px" class="el-icon-circle-plus-outline"></i></span></div>
-    </div>
-    <div class="main">
-      <section>
-        <textarea @blur="changeEditTextIndex" v-show ='editTextIndex != -1' v-model="textInput"></textarea>
-        <p @dblclick="getTextInput" v-show="editTextIndex == -1">{{ listText[activeIndex] }}</p>
-      </section>
-    </div>
-  </div>
-</div>
+
 
 <script>
   //创建Vue实例,得到 ViewModel
